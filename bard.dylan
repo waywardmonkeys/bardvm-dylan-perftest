@@ -114,24 +114,26 @@ define variable *instructions* :: <function-vector> = make(<function-vector>, si
 
 define function exec! ()
   without-bounds-checks
-    let instr :: <instruction> = $code[*pc*];
+    let instr = $code[*pc*];
     let opfn = *instructions*[opcode(instr)];
     opfn(instr);
   end;
   exec!();
 end;
 
-define constant $code :: <simple-object-vector>
-  = vector(make-instruction($LREF, 0, 0),
-           make-instruction($CONST, 1000000, 0),
-           make-instruction($GT, 0, 0),
-           make-instruction($FJUMP, 9, 0),
-           make-instruction($LREF, 0, 0),
-           make-instruction($CONST, 1, 0),
-           make-instruction($ADD, 0, 0),
-           make-instruction($LSET, 0, 0),
-           make-instruction($JUMP, 0, 0),
-           make-instruction($HALT, 0, 0));
+define constant <program> = limited(<vector>, of: <instruction>);
+
+define constant $code :: <program>
+  = as(<program>, vector(make-instruction($LREF, 0, 0),
+                         make-instruction($CONST, 1000000, 0),
+                         make-instruction($GT, 0, 0),
+                         make-instruction($FJUMP, 9, 0),
+                         make-instruction($LREF, 0, 0),
+                         make-instruction($CONST, 1, 0),
+                         make-instruction($ADD, 0, 0),
+                         make-instruction($LSET, 0, 0),
+                         make-instruction($JUMP, 0, 0),
+                         make-instruction($HALT, 0, 0)));
 
 define function vmrun ()
   block (exit)

@@ -59,16 +59,16 @@ define variable %halt = #f;
 
 define constant <instruction> = <simple-object-vector>;
 
-define function %const (instr :: <instruction>)
+define function %const (instr :: <instruction>) => ()
   pushv!(arg1(instr));
   incpc!();
 end;
 
-define function %jump (instr :: <instruction>)
+define function %jump (instr :: <instruction>) => ()
   setpc!(arg1(instr));
 end;
 
-define function %fjump (instr :: <instruction>)
+define function %fjump (instr :: <instruction>) => ()
   if (popv!())
     incpc!()
   else
@@ -76,17 +76,17 @@ define function %fjump (instr :: <instruction>)
   end if;
 end;
 
-define function %lref (instr :: <instruction>)
+define function %lref (instr :: <instruction>) => ()
   pushv!(lref(arg1(instr), arg2(instr)));
   incpc!();
 end;
 
-define function %lset (instr :: <instruction>)
+define function %lset (instr :: <instruction>) => ()
   lset!(arg1(instr), arg2(instr), popv!());
   incpc!();
 end;
 
-define function %gt (instr :: <instruction>)
+define function %gt (instr :: <instruction>) => ()
   if (popv!() > popv!())
     pushv!(#t);
   else
@@ -95,7 +95,7 @@ define function %gt (instr :: <instruction>)
   incpc!();
 end;
 
-define function %add (instr :: <instruction>)
+define function %add (instr :: <instruction>) => ()
   pushv!(popv!() + popv!());
   incpc!();
 end;

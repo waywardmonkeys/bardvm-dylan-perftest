@@ -3,9 +3,9 @@ synopsis:
 author: 
 copyright: 
 
-define variable *pc* = 0;
+define variable *pc* :: <integer> = 0;
 define variable *vals* = make(<vector>, size: 8, fill: 0);
-define variable *nvals* = 0;
+define variable *nvals* :: <integer> = 0;
 define variable *env* = vector(vector(0));
 
 define inline function pushv! (v)

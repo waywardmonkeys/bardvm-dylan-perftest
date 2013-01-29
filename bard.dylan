@@ -67,16 +67,16 @@ define constant $GT    = 6;
 define constant $ADD   = 7;
 define constant $MAX-I = 8;
 
-define function %const (instr :: <instruction>) => ()
+define inline function %const (instr :: <instruction>) => ()
   pushv!(arg1(instr));
   incpc!();
 end;
 
-define function %jump (instr :: <instruction>) => ()
+define inline function %jump (instr :: <instruction>) => ()
   setpc!(arg1(instr));
 end;
 
-define function %fjump (instr :: <instruction>) => ()
+define inline function %fjump (instr :: <instruction>) => ()
   if (popv!())
     incpc!()
   else
@@ -84,17 +84,17 @@ define function %fjump (instr :: <instruction>) => ()
   end if;
 end;
 
-define function %lref (instr :: <instruction>) => ()
+define inline function %lref (instr :: <instruction>) => ()
   pushv!(lref(arg1(instr), arg2(instr)));
   incpc!();
 end;
 
-define function %lset (instr :: <instruction>) => ()
+define inline function %lset (instr :: <instruction>) => ()
   lset!(arg1(instr), arg2(instr), popv!());
   incpc!();
 end;
 
-define function %gt (instr :: <instruction>) => ()
+define inline function %gt (instr :: <instruction>) => ()
   if (popv!() > popv!())
     pushv!(#t);
   else
@@ -103,7 +103,7 @@ define function %gt (instr :: <instruction>) => ()
   incpc!();
 end;
 
-define function %add (instr :: <instruction>) => ()
+define inline function %add (instr :: <instruction>) => ()
   pushv!(popv!() + popv!());
   incpc!();
 end;

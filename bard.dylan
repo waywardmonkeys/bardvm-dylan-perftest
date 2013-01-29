@@ -8,6 +8,19 @@ define variable *vals* :: <simple-object-vector> = make(<vector>, size: 8, fill:
 define variable *nvals* :: <integer> = 0;
 define variable *env* :: <simple-object-vector> = vector(vector(0));
 
+define class <instruction> (<object>)
+  constant slot opcode :: <integer>,
+    required-init-keyword: opcode:;
+  constant slot arg1 = 0,
+    init-keyword: arg1:;
+  constant slot arg2 = 0,
+    init-keyword: arg2:;
+end;
+
+define inline function make-instruction (opcode :: <integer>, arg1, arg2)
+  make(<instruction>, opcode: opcode, arg1: arg1, arg2: arg2)
+end;
+
 define inline function pushv! (v)
   *vals*[*nvals*] := v;
   *nvals* := *nvals* + 1;
@@ -16,18 +29,6 @@ end;
 define inline function popv! ()
  *nvals* := *nvals* - 1;
  *vals*[*nvals*]
-end;
-
-define inline function opcode (i)
-  i[0]
-end;
-
-define inline function arg1 (i)
-  i[1]
-end;
-
-define inline function arg2 (i)
-  i[2]
 end;
 
 define inline function setpc! (d)
@@ -56,8 +57,6 @@ define constant $GT    = 6;
 define constant $ADD   = 7;
 
 define variable %halt = #f;
-
-define constant <instruction> = <simple-object-vector>;
 
 define function %const (instr :: <instruction>) => ()
   pushv!(arg1(instr));
@@ -110,16 +109,16 @@ define function exec! ()
 end;
 
 define constant $code :: <simple-object-vector>
-  = vector(vector($LREF, 0, 0),
-           vector($CONST, 1000000, 0),
-           vector($GT, 0, 0),
-           vector($FJUMP, 9, 0),
-           vector($LREF, 0, 0),
-           vector($CONST, 1, 0),
-           vector($ADD, 0, 0),
-           vector($LSET, 0, 0),
-           vector($JUMP, 0, 0),
-           vector($HALT, 0, 0));
+  = vector(make-instruction($LREF, 0, 0),
+           make-instruction($CONST, 1000000, 0),
+           make-instruction($GT, 0, 0),
+           make-instruction($FJUMP, 9, 0),
+           make-instruction($LREF, 0, 0),
+           make-instruction($CONST, 1, 0),
+           make-instruction($ADD, 0, 0),
+           make-instruction($LSET, 0, 0),
+           make-instruction($JUMP, 0, 0),
+           make-instruction($HALT, 0, 0));
 
 define function vmrun ()
   block (exit)

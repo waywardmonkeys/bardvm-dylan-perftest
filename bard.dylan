@@ -6,7 +6,9 @@ copyright:
 define variable *pc* :: <integer> = 0;
 define variable *vals* :: <simple-object-vector> = make(<vector>, size: 8, fill: 0);
 define variable *nvals* :: <integer> = 0;
-define variable *env* :: <simple-object-vector> = vector(vector(0));
+
+define constant <environment> = limited(<vector>, of: <simple-object-vector>);
+define variable *env* :: <environment> = as(<environment>, vector(vector(0)));
 
 define class <instruction> (<object>)
   constant slot opcode :: <integer>,
@@ -45,15 +47,13 @@ end;
 
 define inline function lref (i :: <integer>, j :: <integer>)
   without-bounds-checks
-    let l :: <simple-object-vector> = *env*[i];
-    l[j]
+    *env*[i][j]
   end
 end;
 
 define inline function lset! (i :: <integer>, j :: <integer>, v)
   without-bounds-checks
-    let l :: <simple-object-vector> = *env*[i];
-    l[j] := v;
+    *env*[i][j] := v;
   end
 end;
 
@@ -140,6 +140,12 @@ define function vmrun ()
       := as(<function-vector>,
             vector(exit, %const, %jump, %fjump, %lref, %lset, %gt, %add));
     exec!();
+  end;
+end;
+
+define method print-object (env :: <environment>, stream :: <stream>) => ()
+  for (e in env)
+    print(e, stream);
   end;
 end;
 

@@ -11,4 +11,5 @@ define module bard
   use dylan-extensions;
   use simple-profiling;
   use format-out;
+  use print;
 end module;

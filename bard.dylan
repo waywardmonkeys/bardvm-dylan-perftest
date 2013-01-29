@@ -114,8 +114,16 @@ define variable *instructions* :: <function-vector> = make(<function-vector>, si
 define function exec! ()
   without-bounds-checks
     let instr = $code[*pc*];
-    let opfn = *instructions*[opcode(instr)];
-    opfn(instr);
+    select (opcode(instr))
+      $CONST => %const(instr);
+      $JUMP => %jump(instr);
+      $FJUMP => %fjump(instr);
+      $LREF => %lref(instr);
+      $LSET => %lset(instr);
+      $GT => %gt(instr);
+      $ADD => %add(instr);
+      otherwise => *instructions*[opcode(instr)](instr);
+    end;
   end;
   exec!();
 end;

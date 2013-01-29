@@ -95,7 +95,9 @@ define inline function %lset (instr :: <instruction>) => ()
 end;
 
 define inline function %gt (instr :: <instruction>) => ()
-  if (popv!() > popv!())
+  let i1 :: <integer> = popv!();
+  let i2 :: <integer> = popv!();
+  if (i1 > i2)
     pushv!(#t);
   else
     pushv!(#f);
@@ -104,7 +106,9 @@ define inline function %gt (instr :: <instruction>) => ()
 end;
 
 define inline function %add (instr :: <instruction>) => ()
-  pushv!(popv!() + popv!());
+  let i1 :: <integer> = popv!();
+  let i2 :: <integer> = popv!();
+  pushv!(i1 + i2);
   incpc!();
 end;
 

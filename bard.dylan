@@ -102,7 +102,7 @@ end;
 define variable *instructions* :: <simple-object-vector> = #[];
 
 define function exec! ()
-  let instr = $code[*pc*];
+  let instr :: <instruction> = $code[*pc*];
   let opfn = *instructions*[opcode(instr)];
   opfn(instr);
   exec!();

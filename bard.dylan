@@ -22,13 +22,17 @@ define inline function make-instruction (opcode :: <integer>, arg1, arg2)
 end;
 
 define inline function pushv! (v)
-  *vals*[*nvals*] := v;
-  *nvals* := *nvals* + 1;
+  without-bounds-checks
+    *vals*[*nvals*] := v;
+    *nvals* := *nvals* + 1;
+  end
 end;
 
 define inline function popv! ()
- *nvals* := *nvals* - 1;
- *vals*[*nvals*]
+  without-bounds-checks
+    *nvals* := *nvals* - 1;
+    *vals*[*nvals*]
+  end
 end;
 
 define inline function setpc! (d)
@@ -40,13 +44,17 @@ define inline function incpc! ()
 end;
 
 define inline function lref (i :: <integer>, j :: <integer>)
-  let l :: <simple-object-vector> = *env*[i];
-  l[j]
+  without-bounds-checks
+    let l :: <simple-object-vector> = *env*[i];
+    l[j]
+  end
 end;
 
 define inline function lset! (i :: <integer>, j :: <integer>, v)
-  let l :: <simple-object-vector> = *env*[i];
-  l[j] := v;
+  without-bounds-checks
+    let l :: <simple-object-vector> = *env*[i];
+    l[j] := v;
+  end
 end;
 
 define constant $HALT  = 0;

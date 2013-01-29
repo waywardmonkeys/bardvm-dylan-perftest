@@ -13,9 +13,9 @@ define variable *env* :: <environment> = as(<environment>, vector(vector(0)));
 define class <instruction> (<object>)
   constant slot opcode :: <integer>,
     required-init-keyword: opcode:;
-  constant slot arg1 = 0,
+  constant slot arg1 :: <integer> = 0,
     init-keyword: arg1:;
-  constant slot arg2 = 0,
+  constant slot arg2 :: <integer> = 0,
     init-keyword: arg2:;
 end;
 

@@ -67,8 +67,6 @@ define constant $GT    = 6;
 define constant $ADD   = 7;
 define constant $MAX-I = 8;
 
-define variable %halt = #f;
-
 define function %const (instr :: <instruction>) => ()
   pushv!(arg1(instr));
   incpc!();
@@ -109,6 +107,7 @@ define function %add (instr :: <instruction>) => ()
   pushv!(popv!() + popv!());
   incpc!();
 end;
+
 define constant <function-vector> = limited(<vector>, of: <function>);
 define variable *instructions* :: <function-vector> = make(<function-vector>, size: $MAX-I, fill: identity);
 
@@ -137,15 +136,9 @@ define constant $code :: <program>
 
 define function vmrun ()
   block (exit)
-    %halt := exit;
-    *instructions*[$HALT] := %halt;
-    *instructions*[$CONST] := %const;
-    *instructions*[$JUMP] := %jump;
-    *instructions*[$FJUMP] := %fjump;
-    *instructions*[$LREF] := %lref;
-    *instructions*[$LSET] := %lset;
-    *instructions*[$GT] := %gt;
-    *instructions*[$ADD] := %add;
+    *instructions*
+      := as(<function-vector>,
+            vector(exit, %const, %jump, %fjump, %lref, %lset, %gt, %add));
     exec!();
   end;
 end;

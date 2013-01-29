@@ -9,5 +9,6 @@ end library;
 define module bard
   use common-dylan, exclude: { format-to-string };
   use dylan-extensions;
+  use simple-profiling;
   use format-out;
 end module;

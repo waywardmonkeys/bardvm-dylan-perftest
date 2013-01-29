@@ -128,5 +128,10 @@ define function vmrun ()
   end;
 end;
 
-vmrun();
+profiling (cpu-time-seconds, cpu-time-microseconds)
+  vmrun();
+results
+  format-out("vmrun (in %d.%s seconds)\n",
+             cpu-time-seconds, integer-to-string(cpu-time-microseconds, size: 6));
+end profiling;
 format-out("\n%=\n", *env*);

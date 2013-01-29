@@ -4,9 +4,9 @@ author:
 copyright: 
 
 define variable *pc* :: <integer> = 0;
-define variable *vals* = make(<vector>, size: 8, fill: 0);
+define variable *vals* :: <simple-object-vector> = make(<vector>, size: 8, fill: 0);
 define variable *nvals* :: <integer> = 0;
-define variable *env* = vector(vector(0));
+define variable *env* :: <simple-object-vector> = vector(vector(0));
 
 define inline function pushv! (v)
   *vals*[*nvals*] := v;
@@ -57,16 +57,18 @@ define constant $ADD   = 7;
 
 define variable %halt = #f;
 
-define function %const (instr)
+define constant <instruction> = <simple-object-vector>;
+
+define function %const (instr :: <instruction>)
   pushv!(arg1(instr));
   incpc!();
 end;
 
-define function %jump (instr)
+define function %jump (instr :: <instruction>)
   setpc!(arg1(instr));
 end;
 
-define function %fjump (instr)
+define function %fjump (instr :: <instruction>)
   if (popv!())
     incpc!()
   else
@@ -74,17 +76,17 @@ define function %fjump (instr)
   end if;
 end;
 
-define function %lref (instr)
+define function %lref (instr :: <instruction>)
   pushv!(lref(arg1(instr), arg2(instr)));
   incpc!();
 end;
 
-define function %lset (instr)
+define function %lset (instr :: <instruction>)
   lset!(arg1(instr), arg2(instr), popv!());
   incpc!();
 end;
 
-define function %gt (instr)
+define function %gt (instr :: <instruction>)
   if (popv!() > popv!())
     pushv!(#t);
   else
@@ -93,12 +95,12 @@ define function %gt (instr)
   incpc!();
 end;
 
-define function %add (instr)
+define function %add (instr :: <instruction>)
   pushv!(popv!() + popv!());
   incpc!();
 end;
 
-define variable *instructions* = #f;
+define variable *instructions* :: <simple-object-vector> = #[];
 
 define function exec! ()
   let instr = $code[*pc*];
@@ -107,7 +109,7 @@ define function exec! ()
   exec!();
 end;
 
-define constant $code
+define constant $code :: <simple-object-vector>
   = vector(vector($LREF, 0, 0),
            vector($CONST, 1000000, 0),
            vector($GT, 0, 0),

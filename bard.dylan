@@ -65,6 +65,7 @@ define constant $LREF  = 4;
 define constant $LSET  = 5;
 define constant $GT    = 6;
 define constant $ADD   = 7;
+define constant $MAX-I = 8;
 
 define variable %halt = #f;
 
@@ -108,8 +109,8 @@ define function %add (instr :: <instruction>) => ()
   pushv!(popv!() + popv!());
   incpc!();
 end;
-
-define variable *instructions* :: <simple-object-vector> = #[];
+define constant <function-vector> = limited(<vector>, of: <function>);
+define variable *instructions* :: <function-vector> = make(<function-vector>, size: $MAX-I, fill: identity);
 
 define function exec! ()
   without-bounds-checks
@@ -135,7 +136,14 @@ define constant $code :: <simple-object-vector>
 define function vmrun ()
   block (exit)
     %halt := exit;
-    *instructions* := vector(%halt, %const, %jump, %fjump, %lref, %lset, %gt, %add);
+    *instructions*[$HALT] := %halt;
+    *instructions*[$CONST] := %const;
+    *instructions*[$JUMP] := %jump;
+    *instructions*[$FJUMP] := %fjump;
+    *instructions*[$LREF] := %lref;
+    *instructions*[$LSET] := %lset;
+    *instructions*[$GT] := %gt;
+    *instructions*[$ADD] := %add;
     exec!();
   end;
 end;

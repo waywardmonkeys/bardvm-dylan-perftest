@@ -39,12 +39,14 @@ define inline function incpc! ()
   *pc* := *pc* + 1;
 end;
 
-define inline function lref (i, j)
-  vector-element(vector-element(*env*, i), j)
+define inline function lref (i :: <integer>, j :: <integer>)
+  let l :: <simple-object-vector> = *env*[i];
+  l[j]
 end;
 
-define inline function lset! (i, j, v)
-  vector-element(vector-element(*env*, i), j) := v;
+define inline function lset! (i :: <integer>, j :: <integer>, v)
+  let l :: <simple-object-vector> = *env*[i];
+  l[j] := v;
 end;
 
 define constant $HALT  = 0;

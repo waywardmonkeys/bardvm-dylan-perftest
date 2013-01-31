@@ -65,68 +65,44 @@ define constant $LREF  = 4;
 define constant $LSET  = 5;
 define constant $GT    = 6;
 define constant $ADD   = 7;
-define constant $MAX-I = 8;
-
-define inline function %const (instr :: <instruction>) => ()
-  pushv!(arg1(instr));
-  incpc!();
-end;
-
-define inline function %jump (instr :: <instruction>) => ()
-  setpc!(arg1(instr));
-end;
-
-define inline function %fjump (instr :: <instruction>) => ()
-  if (popv!())
-    incpc!()
-  else
-    setpc!(arg1(instr));
-  end if;
-end;
-
-define inline function %lref (instr :: <instruction>) => ()
-  pushv!(lref(arg1(instr), arg2(instr)));
-  incpc!();
-end;
-
-define inline function %lset (instr :: <instruction>) => ()
-  lset!(arg1(instr), arg2(instr), popv!());
-  incpc!();
-end;
-
-define inline function %gt (instr :: <instruction>) => ()
-  let i1 :: <integer> = popv!();
-  let i2 :: <integer> = popv!();
-  if (i1 > i2)
-    pushv!(#t);
-  else
-    pushv!(#f);
-  end if;
-  incpc!();
-end;
-
-define inline function %add (instr :: <instruction>) => ()
-  let i1 :: <integer> = popv!();
-  let i2 :: <integer> = popv!();
-  pushv!(i1 + i2);
-  incpc!();
-end;
-
-define constant <function-vector> = limited(<vector>, of: <function>);
-define variable *instructions* :: <function-vector> = make(<function-vector>, size: $MAX-I, fill: identity);
 
 define function exec! ()
   without-bounds-checks
     let instr = $code[*pc*];
     select (opcode(instr))
-      $CONST => %const(instr);
-      $JUMP => %jump(instr);
-      $FJUMP => %fjump(instr);
-      $LREF => %lref(instr);
-      $LSET => %lset(instr);
-      $GT => %gt(instr);
-      $ADD => %add(instr);
-      otherwise => *instructions*[opcode(instr)](instr);
+      $CONST =>
+        pushv!(arg1(instr));
+        incpc!();
+      $JUMP =>
+        setpc!(arg1(instr));
+      $FJUMP =>
+        if (popv!())
+          incpc!()
+        else
+          setpc!(arg1(instr));
+        end if;
+      $LREF =>
+        pushv!(lref(arg1(instr), arg2(instr)));
+        incpc!();
+      $LSET =>
+        lset!(arg1(instr), arg2(instr), popv!());
+        incpc!();
+      $GT =>
+        let i1 :: <integer> = popv!();
+        let i2 :: <integer> = popv!();
+        if (i1 > i2)
+          pushv!(#t);
+        else
+          pushv!(#f);
+        end if;
+        incpc!();
+      $ADD =>
+        let i1 :: <integer> = popv!();
+        let i2 :: <integer> = popv!();
+        pushv!(i1 + i2);
+        incpc!();
+      $HALT =>
+        %halt();
     end;
   end;
   exec!();
@@ -146,11 +122,11 @@ define constant $code :: <program>
                          make-instruction($JUMP, 0, 0),
                          make-instruction($HALT, 0, 0)));
 
+define variable %halt = #f;
+
 define function vmrun ()
   block (exit)
-    *instructions*
-      := as(<function-vector>,
-            vector(exit, %const, %jump, %fjump, %lref, %lset, %gt, %add));
+    %halt := exit;
     exec!();
   end;
 end;
